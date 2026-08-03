@@ -101,7 +101,9 @@ En términos generales, se persiguen dos propiedades:
 
 Un cluster **no es automáticamente una clase real**. El algoritmo detecta regularidades geométricas o estadísticas; corresponde al conocimiento del dominio decidir si esas regularidades tienen significado útil.
 
-![Del dato a la estructura](./assets/learning-foundations.svg)
+<p align="center">
+  <img src="./assets/learning-foundations.svg" alt="Del dato a la estructura" width="100%">
+</p>
 
 **Ejemplo intuitivo.** Si representamos canciones por rasgos como energía, tempo y acústica, un algoritmo puede reunir canciones similares. Esos grupos podrían interpretarse como estilos de escucha o contextos de uso, pero ningún algoritmo sabe por sí mismo que un grupo debe llamarse «para entrenar».
 
@@ -160,7 +162,9 @@ Ambos enfoques agrupan observaciones sin etiquetas, pero construyen el resultado
 - El **clustering basado en centroides**, también llamado **particional**, divide los datos directamente en un número fijo de grupos, $K$. Cada grupo se resume mediante un centro representativo, el **centroide**.
 - El **clustering jerárquico** construye una estructura de grupos anidados. En su versión aglomerativa, comienza con una observación por grupo y los va fusionando progresivamente; el resultado es un árbol llamado **dendrograma**.
 
-![Enfoques de clustering](./assets/clustering-methods.svg)
+<p align="center">
+  <img src="./assets/clustering-methods.svg" alt="Enfoques de clustering" width="100%">
+</p>
 
 > **Analogía:** K-Means reparte libros directamente en $K$ estanterías. El método jerárquico primero junta libros muy similares, después agrupa esas colecciones y conserva la historia completa de esas uniones.
 
@@ -232,7 +236,9 @@ El **clustering basado en densidad** define un cluster como una región del espa
 
 En lugar de buscar un centro de cada grupo o construir un árbol de fusiones, DBSCAN responde a una pregunta local: **«¿hay suficientes observaciones cerca de este punto?»**. Si existen zonas densas conectadas entre sí, forman un cluster; si una observación queda alejada de toda zona densa, se marca como ruido o valor atípico.
 
-![Conceptos de DBSCAN](./assets/dbscan-concepts.svg)
+<p align="center">
+  <img src="./assets/dbscan-concepts.svg" alt="Conceptos de DBSCAN" width="100%">
+</p>
 
 ### 3.1. Los conceptos y los hiperparámetros de DBSCAN
 
@@ -321,7 +327,9 @@ Por ejemplo, al aplicar K-Means a clientes de una tienda, $K=2$ podría mezclar 
 | Jerárquico | Métrica, enlace y altura de corte | Fusiones tempranas irreversibles o partición poco útil. |
 | DBSCAN | $\varepsilon$, `MinPts` y métrica | Clusters artificialmente unidos, exceso de ruido o pérdida de grupos reales. |
 
-![Guía de validación](./assets/validation-guide.svg)
+<p align="center">
+  <img src="./assets/validation-guide.svg" alt="Guía de validación" width="100%">
+</p>
 
 ### 4.1. Método del codo
 
