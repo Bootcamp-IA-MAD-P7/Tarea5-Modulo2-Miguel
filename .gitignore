@@ -1,0 +1,5 @@
+# Entorno local de ejecución del notebook
+.venv/
+
+# Archivos temporales generados por Jupyter
+.ipynb_checkpoints/
