@@ -168,7 +168,7 @@ El algoritmo representativo es **K-Means**. Su objetivo es hallar $K$ centroides
 $$
 \min_{C_1,\ldots,C_K}
 \sum_{k=1}^{K}\sum_{\mathbf{x}_i \in C_k}
-\left\lVert \mathbf{x}_i - \boldsymbol{\mu}_k \right\rVert^2,
+\lVert \mathbf{x}_i - \boldsymbol{\mu}_k \rVert^2,
 $$
 
 donde $\boldsymbol{\mu}_k$ es la media de los puntos de $C_k$. De forma iterativa, K-Means alterna dos acciones:
@@ -260,12 +260,12 @@ DBSCAN se apoya en dos hiperparámetros:
 Para una distancia $d$, el vecindario de radio $\varepsilon$ de un punto $\mathbf{x}$ es:
 
 $$
-N_{\varepsilon}(\mathbf{x}) = \left\{\mathbf{y} \in \mathcal{D} \;\middle|\; d(\mathbf{x},\mathbf{y}) \leq \varepsilon \right\}.
+N_{\varepsilon}(\mathbf{x}) = \{\mathbf{y} \in \mathcal{D} \mid d(\mathbf{x},\mathbf{y}) \leq \varepsilon\}.
 $$
 
 Con la convención habitual de incluir el propio punto, DBSCAN clasifica cada observación como:
 
-- **Punto núcleo:** $\left|N_{\varepsilon}(\mathbf{x})\right| \geq \text{MinPts}$. Está en una región suficientemente densa.
+- **Punto núcleo:** $|N_{\varepsilon}(\mathbf{x})| \geq \text{MinPts}$. Está en una región suficientemente densa.
 - **Punto frontera:** no es núcleo, pero se encuentra dentro del vecindario de un punto núcleo. Se asigna al cluster, aunque no puede expandirlo.
 - **Ruido (*noise* u *outlier*):** no es núcleo ni frontera; DBSCAN le asigna la etiqueta `-1` en implementaciones como scikit-learn.
 
