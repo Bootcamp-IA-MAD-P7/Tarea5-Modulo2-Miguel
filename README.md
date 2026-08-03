@@ -1,6 +1,6 @@
 <div align="center">
 
-<img src="./assets/clustering-cover.svg" alt="Portada de la investigación sobre algoritmos de clustering" width="100%">
+<img src="./assets/clustering-cover-v3.svg" alt="Portada de la investigación sobre algoritmos de clustering" width="100%">
 
 # Investigación y Desarrollo sobre Algoritmos de Clustering
 
@@ -102,7 +102,7 @@ En términos generales, se persiguen dos propiedades:
 Un cluster **no es automáticamente una clase real**. El algoritmo detecta regularidades geométricas o estadísticas; corresponde al conocimiento del dominio decidir si esas regularidades tienen significado útil.
 
 <p align="center">
-  <img src="./assets/learning-foundations-v2.png" alt="Del dato sin etiquetas a una estructura interpretable mediante clustering" width="100%">
+  <img src="./assets/learning-foundations-v3.svg" alt="Infografía: del dato sin etiquetas a una estructura interpretable mediante clustering" width="100%">
 </p>
 
 | Lectura del esquema | Significado |
@@ -170,7 +170,7 @@ Ambos enfoques agrupan observaciones sin etiquetas, pero construyen el resultado
 - El **clustering jerárquico** construye una estructura de grupos anidados. En su versión aglomerativa, comienza con una observación por grupo y los va fusionando progresivamente; el resultado es un árbol llamado **dendrograma**.
 
 <p align="center">
-  <img src="./assets/clustering-methods-v2.png" alt="Mapa visual de los cuatro enfoques principales de clustering" width="100%">
+  <img src="./assets/clustering-methods-v3.svg" alt="Infografía comparativa de los cuatro enfoques principales de clustering" width="100%">
 </p>
 
 | Módulo visual | Algoritmo / enfoque | Idea representada |
@@ -251,7 +251,7 @@ El **clustering basado en densidad** define un cluster como una región del espa
 En lugar de buscar un centro de cada grupo o construir un árbol de fusiones, DBSCAN responde a una pregunta local: **«¿hay suficientes observaciones cerca de este punto?»**. Si existen zonas densas conectadas entre sí, forman un cluster; si una observación queda alejada de toda zona densa, se marca como ruido o valor atípico.
 
 <p align="center">
-  <img src="./assets/dbscan-concepts-v2.png" alt="Esquema visual de una región densa de DBSCAN con puntos núcleo, frontera y ruido" width="100%">
+  <img src="./assets/dbscan-concepts-v3.svg" alt="Infografía de DBSCAN con puntos núcleo, frontera y ruido" width="100%">
 </p>
 
 | Elemento del esquema | Lectura correcta |
@@ -348,7 +348,7 @@ Por ejemplo, al aplicar K-Means a clientes de una tienda, $K=2$ podría mezclar 
 | DBSCAN | $\varepsilon$, `MinPts` y métrica | Clusters artificialmente unidos, exceso de ruido o pérdida de grupos reales. |
 
 <p align="center">
-  <img src="./assets/validation-guide-v2.png" alt="Esquema de validación que conecta el método del codo y el coeficiente de silueta" width="100%">
+  <img src="./assets/validation-guide-v3.svg" alt="Infografía de validación con el método del codo y el coeficiente de silueta" width="100%">
 </p>
 
 | Evidencia de validación | Pregunta que responde |
