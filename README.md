@@ -26,6 +26,7 @@ Esta investigación estudia cómo funcionan los algoritmos de *clustering*, sus 
 2. [Clustering basado en centroides y clustering jerárquico](#2-clustering-basado-en-centroides-y-clustering-jerárquico)
 3. [Clustering basado en densidad: DBSCAN](#3-clustering-basado-en-densidad-dbscan)
 4. [Elección de hiperparámetros y evaluación del agrupamiento](#4-elección-de-hiperparámetros-y-evaluación-del-agrupamiento)
+5. [Algoritmos principales de clustering](#5-algoritmos-principales-de-clustering)
 
 ---
 
@@ -471,6 +472,107 @@ La elección final debe combinar la curva de inercia, el mayor valor de silueta 
 1. scikit-learn developers. [*Clustering performance evaluation*](https://scikit-learn.org/stable/modules/clustering.html#clustering-performance-evaluation) y [*Silhouette analysis on K-Means*](https://scikit-learn.org/stable/auto_examples/cluster/plot_kmeans_silhouette_analysis.html), documentación oficial.
 2. Rousseeuw, P. J. [*Silhouettes: A Graphical Aid to the Interpretation and Validation of Cluster Analysis*](https://doi.org/10.1016/0377-0427(87)90125-7), *Journal of Computational and Applied Mathematics*, 1987.
 3. Kaufman, L. y Rousseeuw, P. J. [*Finding Groups in Data: An Introduction to Cluster Analysis*](https://doi.org/10.1002/9780470316801), Wiley, 2005.
+
+---
+
+## 5. Algoritmos principales de clustering
+
+Esta sección reúne los cuatro algoritmos centrales de la investigación. Todos buscan agrupar datos sin etiquetas, pero no comparten la misma definición de «grupo»: pueden basarse en proximidad a un centro, relaciones jerárquicas, densidad local o un modelo probabilístico.
+
+```mermaid
+flowchart LR
+    A["Datos sin etiquetas"] --> B{"¿Qué estructura\nse espera?"}
+    B -- "Grupos compactos\ny segmentación rápida" --> C["K-Means"]
+    B -- "Relaciones a\ndistintas escalas" --> D["Jerárquico\naglomerativo"]
+    B -- "Formas irregulares\ny ruido" --> E["DBSCAN"]
+    B -- "Grupos solapados\ny probabilidad" --> F["GMM"]
+```
+
+### 5.1. K-Means
+
+**Qué es.** K-Means es un algoritmo particional que divide los datos en $K$ grupos alrededor de sus centroides. Su objetivo es minimizar la distancia cuadrática entre cada punto y el centroide del grupo al que se asigna.
+
+**Mecanismo.** Primero inicializa $K$ centroides —preferiblemente con `k-means++`—; después alterna entre asignar cada observación al centroide más cercano y recalcular cada centroide como la media de los puntos asignados. Se detiene cuando las asignaciones dejan de cambiar de forma relevante.
+
+| Ventajas | Desventajas | Casos de uso comunes |
+| :--- | :--- | :--- |
+| Rápido, simple y escalable en datos numéricos. | Obliga a fijar $K$; es sensible a la inicialización y a valores atípicos. | Segmentación de clientes, agrupación de productos y compresión o cuantización de imágenes. |
+| Sus centroides permiten describir cada grupo con claridad. | Favorece grupos compactos; funciona peor con formas curvas, densidades o tamaños muy distintos. | Creación de perfiles de uso, análisis exploratorio y preprocesamiento. |
+
+**Cuándo elegirlo.** Cuando se necesita una partición rápida y operativa, los datos son principalmente numéricos y escalados, y se espera que los grupos sean relativamente compactos. El número $K$ debe justificarse con el codo, silueta y conocimiento del dominio.
+
+### 5.2. Clustering jerárquico aglomerativo
+
+**Qué es.** Es un método *bottom-up* que comienza con un cluster por observación y fusiona los dos clusters más próximos en cada iteración. El resultado es un **dendrograma**, un árbol que conserva la estructura de agrupación a diferentes niveles.
+
+**Mecanismo.** La noción de «dos clusters más próximos» depende del enlace elegido: *single*, *complete*, *average* o Ward. Al cortar el dendrograma a una determinada altura se obtiene una partición final; no hace falta fijar el número de clusters antes de construir el árbol.
+
+| Ventajas | Desventajas | Casos de uso comunes |
+| :--- | :--- | :--- |
+| Muy interpretable: muestra relaciones a varios niveles de detalle. | Mayor coste de tiempo y memoria que K-Means para conjuntos grandes. | Taxonomías, análisis de expresión génica y estudio de similitud entre muestras biológicas. |
+| Permite escoger el nivel de corte después de observar la jerarquía. | Las fusiones son irreversibles y dependen mucho de la métrica y del enlace. | Agrupación de documentos, análisis exploratorio de segmentos y construcción de dendrogramas. |
+
+**Cuándo elegirlo.** Cuando importa entender qué grupos están relacionados entre sí o explorar varias granularidades, especialmente en conjuntos pequeños o medianos. Conviene inspeccionar el dendrograma y contrastar varios enlaces.
+
+### 5.3. DBSCAN
+
+**Qué es.** DBSCAN es un algoritmo basado en densidad: un cluster es una región con muchos puntos conectados entre sí, separada de otras regiones por zonas poco pobladas. Identifica explícitamente observaciones que no pertenecen a ninguna región densa como ruido.
+
+**Mecanismo.** Define un radio de vecindad $\varepsilon$ y un mínimo de vecinos `MinPts`. Un punto con suficientes vecinos es núcleo; sus vecinos y los núcleos alcanzables por densidad expanden el cluster. Los puntos cercanos a un núcleo, pero sin densidad suficiente, son frontera; los aislados quedan como ruido.
+
+| Ventajas | Desventajas | Casos de uso comunes |
+| :--- | :--- | :--- |
+| No necesita especificar $K$ y detecta ruido de forma nativa. | Elegir $\varepsilon$ y `MinPts` es sensible a la escala, métrica y dimensionalidad. | Agrupación de coordenadas GPS, localización de zonas de actividad y análisis espacial. |
+| Encuentra grupos no convexos: anillos, trayectorias o formas curvas. | Un único nivel de densidad falla si los clusters tienen densidades muy diferentes. | Detección de anomalías, agrupación de eventos de red y análisis de datos geográficos. |
+
+**Cuándo elegirlo.** Cuando se esperan formas irregulares, existen valores atípicos relevantes y no se conoce $K$. No suele ser la primera opción con datos de muy alta dimensión o densidades muy heterogéneas; en ese caso pueden evaluarse alternativas como OPTICS o HDBSCAN.
+
+### 5.4. Gaussian Mixture Models (GMM)
+
+**Qué es.** Un GMM es un modelo probabilístico que supone que los datos proceden de una mezcla de $K$ distribuciones gaussianas. A diferencia de K-Means, no se limita a asignar cada punto a un único grupo: calcula la probabilidad de pertenencia de cada punto a cada componente, por lo que realiza **clustering suave**.
+
+La densidad modelada es:
+
+$$
+p(\mathbf{x}) = \sum_{k=1}^{K} \pi_k\, \mathcal{N}(\mathbf{x} \mid \boldsymbol{\mu}_k, \boldsymbol{\Sigma}_k),
+\qquad \sum_{k=1}^{K}\pi_k = 1,
+$$
+
+donde $\pi_k$ es el peso de la componente, $\boldsymbol{\mu}_k$ su media y $\boldsymbol{\Sigma}_k$ su matriz de covarianza. La covarianza permite que los grupos sean elípticos, orientados y de tamaños diferentes.
+
+**Mecanismo.** Habitualmente se ajusta con el algoritmo **EM** (*Expectation-Maximization*): en el paso E calcula las probabilidades de pertenencia (*responsibilities*) con los parámetros actuales; en el paso M actualiza pesos, medias y covarianzas para maximizar la verosimilitud. Se repite hasta converger. Si se necesita una etiqueta única, se asigna la componente de mayor probabilidad.
+
+| Ventajas | Desventajas | Casos de uso comunes |
+| :--- | :--- | :--- |
+| Expresa incertidumbre y permite solapamiento entre grupos. | Hay que fijar el número de componentes y suele ser sensible a inicialización y máximos locales. | Segmentación de clientes con perfiles solapados y análisis de poblaciones en biomedicina. |
+| Modela clusters elípticos mediante la covarianza y estima densidades. | Supone una forma gaussiana; puede requerir mucha información para estimar covarianzas completas. | Modelado de distribuciones, detección probabilística de anomalías y reconocimiento de patrones. |
+
+**Cuándo elegirlo.** Cuando los clusters se solapan, la incertidumbre importa o la geometría es aproximadamente elíptica. El número de componentes puede compararse con AIC o BIC, además de la silueta y de la interpretación. En el caso particular de covarianzas esféricas e iguales y asignaciones duras, K-Means puede entenderse como una aproximación más restrictiva de esta idea.
+
+### 5.5. Comparativa y guía de selección
+
+| Algoritmo | Representación del cluster | ¿Hay que fijar $K$? | ¿Admite ruido explícito? | Forma que maneja mejor | Tipo de asignación |
+| :--- | :--- | :---: | :---: | :--- | :--- |
+| K-Means | Centroide | Sí | No | Compacta, aproximadamente esférica | Dura |
+| Jerárquico aglomerativo | Ramas de un dendrograma | No al inicio | No, salvo tratamiento adicional | Depende del enlace y la métrica | Dura al elegir el corte |
+| DBSCAN | Región densa conectada | No | Sí | Irregular y no convexa | Dura, con etiqueta de ruido |
+| GMM | Componente gaussiana con media y covarianza | Sí, componentes | No de forma nativa | Elíptica; puede solaparse | Suave (probabilística) |
+
+La siguiente guía resume una elección inicial razonable, que siempre debe validarse con el punto 4:
+
+- **Necesitas rapidez y perfiles simples:** empieza por K-Means.
+- **Necesitas una explicación visual de las relaciones entre grupos:** usa jerárquico aglomerativo.
+- **Hay ruido relevante o formas complejas:** prueba DBSCAN.
+- **Los grupos se solapan y la incertidumbre es informativa:** utiliza GMM.
+
+No existe un algoritmo ganador para todos los datos. La decisión correcta combina geometría, escala, tipo de variables, volumen de datos, presencia de ruido y finalidad del análisis.
+
+### Fuentes
+
+1. scikit-learn developers. [*Clustering*](https://scikit-learn.org/stable/modules/clustering.html) y [*Gaussian mixture models*](https://scikit-learn.org/stable/modules/mixture.html), documentación oficial.
+2. MacQueen, J. B. [*Some Methods for Classification and Analysis of Multivariate Observations*](https://projecteuclid.org/euclid.bsmsp/1200512992), 1967.
+3. Ester, M., Kriegel, H.-P., Sander, J. y Xu, X. [*A Density-Based Algorithm for Discovering Clusters in Large Spatial Databases with Noise*](https://www.aaai.org/Papers/KDD/1996/KDD96-037.pdf), KDD, 1996.
+4. Dempster, A. P., Laird, N. M. y Rubin, D. B. [*Maximum Likelihood from Incomplete Data via the EM Algorithm*](https://doi.org/10.1111/j.2517-6161.1977.tb01600.x), *Journal of the Royal Statistical Society: Series B*, 1977.
 
 ---
 
