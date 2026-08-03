@@ -1,42 +1,10 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1600 720" role="img" aria-labelledby="title desc">
-  <title id="title">Investigación sobre algoritmos de clustering</title>
-  <desc id="desc">Portada académica con una red de puntos y conexiones que representa datos sin etiquetas.</desc>
-  <defs>
-    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#0c0d0b"/><stop offset=".55" stop-color="#201805"/><stop offset="1" stop-color="#3a2705"/></linearGradient>
-    <radialGradient id="glow" cx="82%" cy="45%" r="52%"><stop stop-color="#e6a72e" stop-opacity=".38"/><stop offset="1" stop-color="#e6a72e" stop-opacity="0"/></radialGradient>
-    <filter id="soft"><feGaussianBlur stdDeviation="9"/></filter>
-    <style>text{font-family:Arial,Helvetica,sans-serif}.eyebrow{font-size:24px;font-weight:700;letter-spacing:5px}.title{font-size:76px;font-weight:800;letter-spacing:1px}.subtitle{font-size:25px;font-weight:400;letter-spacing:2px}.tag{font-size:18px;font-weight:700;letter-spacing:2px}</style>
-  </defs>
-  <rect width="1600" height="720" fill="url(#bg)"/>
-  <rect width="1600" height="720" fill="url(#glow)"/>
-  <g opacity=".32" stroke="#c79631" stroke-width="1.4" fill="none">
-    <path d="M74 110L258 226 420 132 555 315 700 184 902 288 1086 160 1280 240 1508 112"/>
-    <path d="M36 469L180 350 327 495 496 400 635 578 798 448 964 575 1112 420 1285 553 1550 392"/>
-    <path d="M130 640L328 495 420 660 635 578 745 694 964 575 1080 688 1285 553 1450 650"/>
-    <path d="M258 226L327 495M420 132L496 400M555 315L635 578M700 184L798 448M902 288L964 575M1086 160L1112 420M1280 240L1285 553"/>
-  </g>
-  <g fill="#d6aa4b" opacity=".6">
-    <circle cx="74" cy="110" r="5"/><circle cx="258" cy="226" r="6"/><circle cx="420" cy="132" r="5"/><circle cx="555" cy="315" r="7"/><circle cx="700" cy="184" r="5"/><circle cx="902" cy="288" r="6"/><circle cx="1086" cy="160" r="5"/><circle cx="1280" cy="240" r="7"/><circle cx="1508" cy="112" r="5"/><circle cx="180" cy="350" r="5"/><circle cx="327" cy="495" r="7"/><circle cx="635" cy="578" r="6"/><circle cx="964" cy="575" r="7"/><circle cx="1285" cy="553" r="8"/>
-  </g>
-  <g fill="#f8c65a"><circle cx="1112" cy="420" r="8"/><circle cx="1285" cy="553" r="11"/><circle cx="1450" cy="650" r="8"/><circle cx="1550" cy="392" r="6"/></g>
-  <g filter="url(#soft)" fill="#f8c65a" opacity=".45"><circle cx="1285" cy="553" r="35"/><circle cx="1450" cy="650" r="25"/></g>
-  <g transform="translate(126 172)">
-    <rect x="0" y="0" width="76" height="76" rx="18" fill="#f8c65a"/>
-    <path d="M22 38h32M22 52h22M22 24h32" stroke="#102c56" stroke-width="6" stroke-linecap="round"/>
-    <text x="102" y="30" class="eyebrow" fill="#f8c65a">BOOTCAMP IA · MÓDULO 2</text>
-    <text x="0" y="152" class="title" fill="#fff">ALGORITMOS DE</text>
-    <text x="0" y="238" class="title" fill="#f8c65a">CLUSTERING</text>
-    <rect x="0" y="282" width="730" height="2" fill="#d1a347" opacity=".6"/>
-    <text x="0" y="332" class="subtitle" fill="#dce8ff">Investigación y desarrollo sobre aprendizaje no supervisado</text>
-    <g transform="translate(0 394)">
-      <rect width="154" height="42" rx="21" fill="#ffffff" fill-opacity=".12" stroke="#cfa44d"/>
-      <text x="25" y="27" class="tag" fill="#fff">K-MEANS</text>
-      <rect x="170" width="202" height="42" rx="21" fill="#ffffff" fill-opacity=".12" stroke="#cfa44d"/>
-      <text x="194" y="27" class="tag" fill="#fff">JERÁRQUICO</text>
-      <rect x="388" width="132" height="42" rx="21" fill="#ffffff" fill-opacity=".12" stroke="#cfa44d"/>
-      <text x="416" y="27" class="tag" fill="#fff">DBSCAN</text>
-      <rect x="536" width="104" height="42" rx="21" fill="#ffffff" fill-opacity=".12" stroke="#cfa44d"/>
-      <text x="569" y="27" class="tag" fill="#fff">GMM</text>
-    </g>
-  </g>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1400 760" role="img" aria-labelledby="title desc">
+<title id="title">Investigación sobre algoritmos de clustering</title><desc id="desc">Portada académica con un núcleo central y cuatro enfoques de clustering.</desc>
+<defs><linearGradient id="blue" x1="0" x2="1"><stop stop-color="#2563eb"/><stop offset="1" stop-color="#14b8a6"/></linearGradient><linearGradient id="warm" x1="0" x2="1"><stop stop-color="#f59e0b"/><stop offset="1" stop-color="#f36f45"/></linearGradient><filter id="s"><feDropShadow dx="0" dy="14" stdDeviation="14" flood-color="#17335b" flood-opacity=".15"/></filter><style>text{font-family:Arial,Helvetica,sans-serif}.k{font-size:20px;font-weight:700;letter-spacing:3px}.h{font-size:51px;font-weight:800;fill:#12253e}.p{font-size:24px;fill:#506581}.tag{font-size:19px;font-weight:800;fill:#fff}.core{font-size:30px;font-weight:800;fill:#12253e}.sub{font-size:21px;fill:#506581}</style></defs>
+<rect width="1400" height="760" fill="#fff"/><text x="700" y="80" text-anchor="middle" class="k" fill="#52739b">BOOTCAMP IA · MÓDULO 2 · TAREA 5</text><text x="700" y="140" text-anchor="middle" class="h">Algoritmos de clustering</text><text x="700" y="178" text-anchor="middle" class="p">Investigación y desarrollo sobre aprendizaje no supervisado</text>
+<g filter="url(#s)"><circle cx="700" cy="438" r="152" fill="#fff" stroke="#d9e4f0" stroke-width="16"/><circle cx="700" cy="438" r="126" fill="#f8fbff"/><circle cx="350" cy="392" r="78" fill="#fff" stroke="#8b5cf6" stroke-width="18"/><circle cx="1050" cy="392" r="78" fill="#fff" stroke="#14b8a6" stroke-width="18"/><circle cx="490" cy="615" r="78" fill="#fff" stroke="#2563eb" stroke-width="18"/><circle cx="910" cy="615" r="78" fill="#fff" stroke="url(#warm)" stroke-width="18"/></g>
+<g stroke-width="5" fill="none"><path d="M548 418L428 398" stroke="#8b5cf6"/><path d="M852 418l120-20" stroke="#14b8a6"/><path d="M594 550l-55 43" stroke="#2563eb"/><path d="M806 550l55 43" stroke="#f59e0b"/></g>
+<text x="700" y="425" text-anchor="middle" class="core">Clustering</text><text x="700" y="460" text-anchor="middle" class="sub">datos sin etiquetas</text><text x="700" y="490" text-anchor="middle" class="sub">estructura y patrones</text>
+<text x="350" y="385" text-anchor="middle" class="core">K</text><text x="350" y="417" text-anchor="middle" class="sub">K-Means</text><text x="1050" y="385" text-anchor="middle" class="core">↗</text><text x="1050" y="417" text-anchor="middle" class="sub">Jerárquico</text><text x="490" y="608" text-anchor="middle" class="core">ε</text><text x="490" y="640" text-anchor="middle" class="sub">DBSCAN</text><text x="910" y="608" text-anchor="middle" class="core">p</text><text x="910" y="640" text-anchor="middle" class="sub">GMM</text>
+<rect x="390" y="698" width="620" height="42" rx="21" fill="#12253e"/><text x="700" y="725" text-anchor="middle" class="tag">CENTROIDES · JERARQUÍA · DENSIDAD · PROBABILIDAD</text>
 </svg>
