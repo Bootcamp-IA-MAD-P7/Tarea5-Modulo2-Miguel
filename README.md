@@ -1,5 +1,7 @@
 <div align="center">
 
+<img src="./assets/clustering-cover.png" alt="Ilustración conceptual de agrupamientos de datos" width="100%">
+
 # Investigación y Desarrollo sobre Algoritmos de Clustering
 
 ### Parte 1 · Algoritmos no supervisados de clustering
@@ -14,11 +16,34 @@
 
 </div>
 
-## Descripción
+## Ficha de la entrega
+
+| Elemento | Alcance |
+| :--- | :--- |
+| **Asignatura** | Bootcamp de Inteligencia Artificial · Módulo 2 |
+| **Actividad** | Tarea 5 · Investigación y desarrollo sobre algoritmos de clustering |
+| **Modalidad** | Investigación teórica con formulación matemática, visualizaciones y código reproducible opcional |
+| **Objetivo** | Explicar cómo se descubren estructuras en datos sin etiquetas y cuándo conviene cada enfoque |
+| **Estado** | Completada |
+
+> [!NOTE]
+> **Criterio de lectura.** Cada agrupamiento debe interpretarse a la luz de los datos, la métrica de similitud y el objetivo del análisis. Un algoritmo no revela por sí solo categorías verdaderas: propone una estructura que debe validarse.
+
+## Propósito de la investigación
 
 Esta investigación estudia cómo funcionan los algoritmos de *clustering*, sus principales tipos, ventajas, desventajas y aplicaciones en el mundo real.
 
 > **Objetivo:** comprender los fundamentos del aprendizaje no supervisado y analizar los distintos enfoques utilizados para descubrir agrupaciones en los datos.
+
+### Cobertura del enunciado
+
+| Requisito solicitado | Desarrollo en este README |
+| :--- | :--- |
+| Fundamentos del aprendizaje no supervisado | [Sección 1](#1-aprendizaje-no-supervisado-y-algoritmos-de-clustering) |
+| Centroides frente a jerárquico | [Sección 2](#2-clustering-basado-en-centroides-y-clustering-jerárquico) |
+| Clustering basado en densidad | [Sección 3](#3-clustering-basado-en-densidad-dbscan) |
+| Hiperparámetros y evaluación | [Sección 4](#4-elección-de-hiperparámetros-y-evaluación-del-agrupamiento) |
+| K-Means, aglomerativo, DBSCAN y GMM | [Sección 5](#5-algoritmos-principales-de-clustering) |
 
 ## Índice
 
