@@ -26,6 +26,10 @@
 | **Objetivo** | Explicar cómo se descubren estructuras en datos sin etiquetas y cuándo conviene cada enfoque |
 | **Estado** | Completada |
 
+## Laboratorio reproducible
+
+El complemento práctico está disponible en [`notebooks/01_laboratorio_clustering.ipynb`](./notebooks/01_laboratorio_clustering.ipynb). Incluye una comparación visual de K-Means, aglomerativo, DBSCAN y GMM, además del método del codo y el coeficiente de silueta.
+
 > [!NOTE]
 > **Criterio de lectura.** Cada agrupamiento debe interpretarse a la luz de los datos, la métrica de similitud y el objetivo del análisis. Un algoritmo no revela por sí solo categorías verdaderas: propone una estructura que debe validarse.
 
