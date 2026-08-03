@@ -4,7 +4,7 @@
 
 ### Parte 1 · Algoritmos no supervisados de clustering
 
-![Estado](https://img.shields.io/badge/estado-en%20desarrollo-F59E0B?style=for-the-badge)
+![Estado](https://img.shields.io/badge/estado-terminado-16A34A?style=for-the-badge)
 ![Área](https://img.shields.io/badge/área-aprendizaje%20no%20supervisado-2563EB?style=for-the-badge)
 ![Tema](https://img.shields.io/badge/tema-clustering-7C3AED?style=for-the-badge)
 
