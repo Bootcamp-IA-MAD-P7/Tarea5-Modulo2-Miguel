@@ -24,6 +24,7 @@ Esta investigación estudia cómo funcionan los algoritmos de *clustering*, sus 
 
 1. [Aprendizaje no supervisado y algoritmos de clustering](#1-aprendizaje-no-supervisado-y-algoritmos-de-clustering)
 2. [Clustering basado en centroides y clustering jerárquico](#2-clustering-basado-en-centroides-y-clustering-jerárquico)
+3. [Clustering basado en densidad: DBSCAN](#3-clustering-basado-en-densidad-dbscan)
 
 ---
 
@@ -227,6 +228,110 @@ En resumen, **K-Means responde «¿cómo divido los datos en exactamente $K$ gru
 1. scikit-learn developers. [*Clustering*](https://scikit-learn.org/stable/modules/clustering.html), documentación oficial: K-Means, clustering jerárquico y reglas de enlace.
 2. MacQueen, J. B. [*Some Methods for Classification and Analysis of Multivariate Observations*](https://projecteuclid.org/euclid.bsmsp/1200512992), 1967. Introduce K-Means.
 3. Murtagh, F. y Contreras, P. [*Algorithms for Hierarchical Clustering: An Overview*](https://doi.org/10.1002/widm.1214), *WIREs Data Mining and Knowledge Discovery*, 2017.
+
+---
+
+## 3. Clustering basado en densidad: DBSCAN
+
+### Idea central: los clusters son regiones densas separadas por zonas vacías
+
+El **clustering basado en densidad** define un cluster como una región del espacio donde los datos se concentran, separada de otras regiones por zonas de baja densidad. Su algoritmo más representativo es **DBSCAN** (*Density-Based Spatial Clustering of Applications with Noise*).
+
+En lugar de buscar un centro de cada grupo o construir un árbol de fusiones, DBSCAN responde a una pregunta local: **«¿hay suficientes observaciones cerca de este punto?»**. Si existen zonas densas conectadas entre sí, forman un cluster; si una observación queda alejada de toda zona densa, se marca como ruido o valor atípico.
+
+```mermaid
+flowchart LR
+    A["Punto analizado"] --> B{"¿Tiene al menos\nMinPts vecinos dentro de ε?"}
+    B -- "Sí" --> C["Punto núcleo\n(expande el cluster)"]
+    B -- "No, pero está junto\na un núcleo" --> D["Punto frontera\n(pertenece al cluster)"]
+    B -- "No" --> E["Ruido / outlier\n(no se asigna a un cluster)"]
+    C --> F["Conectar núcleos\npróximos y sus fronteras"]
+```
+
+### 3.1. Los conceptos y los hiperparámetros de DBSCAN
+
+DBSCAN se apoya en dos hiperparámetros:
+
+| Hiperparámetro | Significado | Efecto al aumentarlo |
+| :--- | :--- | :--- |
+| $\varepsilon$ (*eps*) | Radio máximo del vecindario de un punto | Se conectan puntos más alejados; los clusters pueden crecer o fusionarse. |
+| $\text{MinPts}$ (*min_samples*) | Número mínimo de puntos del vecindario para considerar una zona densa | Exige mayor densidad; crece el número de puntos clasificados como ruido. |
+
+Para una distancia $d$, el vecindario de radio $\varepsilon$ de un punto $\mathbf{x}$ es:
+
+$$
+N_{\varepsilon}(\mathbf{x}) = \left\{\mathbf{y} \in \mathcal{D} \;\middle|\; d(\mathbf{x},\mathbf{y}) \leq \varepsilon \right\}.
+$$
+
+Con la convención habitual de incluir el propio punto, DBSCAN clasifica cada observación como:
+
+- **Punto núcleo:** $\left|N_{\varepsilon}(\mathbf{x})\right| \geq \text{MinPts}$. Está en una región suficientemente densa.
+- **Punto frontera:** no es núcleo, pero se encuentra dentro del vecindario de un punto núcleo. Se asigna al cluster, aunque no puede expandirlo.
+- **Ruido (*noise* u *outlier*):** no es núcleo ni frontera; DBSCAN le asigna la etiqueta `-1` en implementaciones como scikit-learn.
+
+> El criterio de vecindad depende de la distancia elegida. Por eso es imprescindible **escalar las variables** cuando sus unidades son diferentes; de lo contrario, $\varepsilon$ no tendrá una interpretación coherente.
+
+### 3.2. Mecanismo de funcionamiento
+
+De forma simplificada, DBSCAN recorre los puntos aún no visitados:
+
+1. Calcula el vecindario de radio $\varepsilon$ del punto actual.
+2. Si no alcanza `MinPts`, lo deja provisionalmente como ruido.
+3. Si es un punto núcleo, crea un cluster y añade todos sus vecinos.
+4. Cuando entre los vecinos aparece otro núcleo, también incorpora sus vecinos. Esta expansión continúa mientras existan núcleos conectados por densidad.
+5. Los puntos que nunca quedan conectados a un núcleo permanecen como ruido.
+
+El término importante es **conectividad por densidad**: dos zonas forman un mismo cluster si es posible recorrerlas mediante una cadena de puntos núcleo vecinos. Así, DBSCAN puede seguir curvas o contornos complejos sin tener que aproximarlos mediante un centro.
+
+```mermaid
+flowchart LR
+    N1["Núcleo A"] --- N2["Núcleo B"] --- N3["Núcleo C"]
+    N1 --- F1["Frontera"]
+    N3 --- F2["Frontera"]
+    O["Punto aislado"]
+    classDef core fill:#2563EB,color:#fff,stroke:#1D4ED8;
+    classDef border fill:#BFDBFE,color:#172554,stroke:#60A5FA;
+    classDef noise fill:#E5E7EB,color:#374151,stroke:#9CA3AF;
+    class N1,N2,N3 core;
+    class F1,F2 border;
+    class O noise;
+```
+
+### 3.3. Diferencias frente a centroides y jerárquico
+
+| Aspecto | Basado en centroides — K-Means | Jerárquico aglomerativo | Basado en densidad — DBSCAN |
+| :--- | :--- | :--- | :--- |
+| Idea de cluster | Puntos próximos a una media o centroide | Grupos unidos progresivamente según un enlace | Región densa conectada con otras regiones densas |
+| Forma esperada | Aproximadamente compacta o esférica | Depende del enlace; puede mostrar relaciones a varias escalas | Puede ser irregular, curvada o alargada |
+| Número de grupos | Debe fijarse $K$ antes de ejecutar | Se elige el corte del dendrograma | **No se especifica $K$**; emerge de $\varepsilon$ y `MinPts` |
+| Valores atípicos | Se fuerzan a pertenecer a algún cluster | Normalmente se integran en alguna fusión | Puede identificarlos explícitamente como ruido |
+| Parámetros decisivos | $K$, inicialización y escala | Métrica, enlace y nivel de corte | $\varepsilon$, `MinPts`, métrica y escala |
+| Salida | Partición plana de todos los puntos | Dendrograma y partición al cortarlo | Partición plana parcial: clusters + posible ruido |
+
+La diferencia conceptual puede resumirse así:
+
+- **K-Means** pregunta: «¿cuál es el centro más cercano a cada punto?».
+- **Jerárquico aglomerativo** pregunta: «¿qué dos grupos deberían fusionarse ahora?».
+- **DBSCAN** pregunta: «¿qué puntos pertenecen a la misma región suficientemente densa?».
+
+### 3.4. Cuándo usar DBSCAN, ventajas y limitaciones
+
+DBSCAN es una buena elección cuando se esperan grupos de formas no convexas y se desea separar los valores atípicos. Por ejemplo, permite identificar zonas de concentración en coordenadas GPS de taxis, detectar agrupaciones de eventos en redes o descubrir grupos espaciales de galaxias, sin obligar a que todos los puntos pertenezcan a un segmento.
+
+| Ventajas | Limitaciones |
+| :--- | :--- |
+| No requiere indicar el número de clusters. | La elección de $\varepsilon$ es muy sensible y depende de la escala y de la métrica. |
+| Detecta clusters de formas arbitrarias. | Un único $\varepsilon$ funciona mal si los clusters tienen densidades muy distintas. |
+| Identifica ruido de manera explícita. | La distancia pierde capacidad discriminativa en muchas dimensiones; suele requerir reducción de dimensionalidad o una métrica adecuada. |
+| No necesita inicialización aleatoria de centroides. | Puede requerir recursos considerables en conjuntos muy grandes, según la implementación y la estructura de vecindad. |
+
+Un criterio práctico es usar DBSCAN tras normalizar los datos y analizar la distancia al $k$-ésimo vecino más cercano, tomando $k \approx \text{MinPts}$. La «rodilla» de esa gráfica puede sugerir un valor inicial de $\varepsilon$, pero no sustituye la validación con conocimiento del dominio y métricas de calidad. Las métricas de evaluación se tratarán de forma específica en el punto 4.
+
+### Fuentes
+
+1. scikit-learn developers. [*DBSCAN y clustering basado en densidad*](https://scikit-learn.org/stable/modules/clustering.html#dbscan), documentación oficial.
+2. Ester, M., Kriegel, H.-P., Sander, J. y Xu, X. [*A Density-Based Algorithm for Discovering Clusters in Large Spatial Databases with Noise*](https://www.aaai.org/Papers/KDD/1996/KDD96-037.pdf), KDD, 1996.
+3. Schubert, E., Sander, J., Ester, M., Kriegel, H.-P. y Xu, X. [*DBSCAN Revisited, Revisited: Why and How You Should (Still) Use DBSCAN*](https://doi.org/10.1145/3068335), *ACM Transactions on Database Systems*, 2017.
 
 ---
 
