@@ -1,0 +1,18 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1600 560" role="img" aria-labelledby="title desc">
+  <title id="title">Aprendizaje no supervisado y clustering</title><desc id="desc">Infografía que muestra cómo los datos sin etiquetas se convierten en grupos interpretables y los diferencia del aprendizaje supervisado.</desc>
+  <defs><filter id="s"><feDropShadow dx="0" dy="9" stdDeviation="10" flood-color="#16365f" flood-opacity=".14"/></filter><style>text{font-family:Arial,Helvetica,sans-serif}.h{font-size:28px;font-weight:800;fill:#10233f}.k{font-size:15px;font-weight:700;letter-spacing:2px}.b{font-size:20px;font-weight:700;fill:#16365f}.p{font-size:16px;fill:#53657c}</style></defs>
+  <rect width="1600" height="560" rx="28" fill="#f7f9fd"/>
+  <text x="70" y="72" class="h">DEL DATO A LA ESTRUCTURA</text><text x="70" y="103" class="k" fill="#5273a4">APRENDIZAJE NO SUPERVISADO</text>
+  <g filter="url(#s)">
+    <rect x="70" y="162" width="214" height="190" rx="28" fill="#fff"/><rect x="330" y="162" width="214" height="190" rx="28" fill="#fff"/><rect x="590" y="162" width="214" height="190" rx="28" fill="#fff"/><rect x="850" y="162" width="214" height="190" rx="28" fill="#fff"/>
+  </g>
+  <g stroke-linecap="round"><path d="M284 257h46M544 257h46M804 257h46" stroke="#9fb4d5" stroke-width="4"/><path d="M318 246l12 11-12 11M578 246l12 11-12 11M838 246l12 11-12 11" stroke="#9fb4d5" stroke-width="4" fill="none"/></g>
+  <g><circle cx="177" cy="215" r="38" fill="#dbeafe"/><circle cx="437" cy="215" r="38" fill="#ede9fe"/><circle cx="697" cy="215" r="38" fill="#ccfbf1"/><circle cx="957" cy="215" r="38" fill="#fef3c7"/>
+    <text x="177" y="224" text-anchor="middle" class="b">X</text><text x="437" y="222" text-anchor="middle" class="b">d</text><text x="697" y="221" text-anchor="middle" class="b">∿</text><text x="957" y="222" text-anchor="middle" class="b">✓</text>
+    <text x="177" y="283" text-anchor="middle" class="b">Datos</text><text x="177" y="312" text-anchor="middle" class="p">sin etiquetas</text>
+    <text x="437" y="283" text-anchor="middle" class="b">Similitud</text><text x="437" y="312" text-anchor="middle" class="p">distancia o métrica</text>
+    <text x="697" y="283" text-anchor="middle" class="b">Clustering</text><text x="697" y="312" text-anchor="middle" class="p">descubrir patrones</text>
+    <text x="957" y="283" text-anchor="middle" class="b">Decisión</text><text x="957" y="312" text-anchor="middle" class="p">interpretar grupos</text></g>
+  <g transform="translate(1140 132)"><rect width="390" height="294" rx="30" fill="#102b52"/><text x="34" y="52" class="k" fill="#99c4ff">DIFERENCIA CLAVE</text><path d="M35 101h320" stroke="#537eb5"/><text x="35" y="146" class="b" fill="#fff">SUPERVISADO</text><text x="35" y="177" class="p" fill="#d7e5fa">X + etiqueta → predicción</text><path d="M35 205h320" stroke="#537eb5"/><text x="35" y="247" class="b" fill="#fff">NO SUPERVISADO</text><text x="35" y="278" class="p" fill="#d7e5fa">X → estructura latente</text></g>
+  <text x="70" y="470" class="p">Un cluster no es una clase verdadera: es una hipótesis de estructura que debe validarse.</text>
+</svg>

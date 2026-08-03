@@ -1,5 +1,7 @@
 <div align="center">
 
+<img src="./assets/clustering-cover.svg" alt="Portada de la investigación sobre algoritmos de clustering" width="100%">
+
 # Investigación y Desarrollo sobre Algoritmos de Clustering
 
 ### Parte 1 · Algoritmos no supervisados de clustering
@@ -99,19 +101,7 @@ En términos generales, se persiguen dos propiedades:
 
 Un cluster **no es automáticamente una clase real**. El algoritmo detecta regularidades geométricas o estadísticas; corresponde al conocimiento del dominio decidir si esas regularidades tienen significado útil.
 
-```mermaid
-flowchart LR
-    A(["Datos sin etiquetas\nX = {x¹, x², ..., xⁿ}"]) --> B["Representación\ny similitud"]
-    B --> C{{"Algoritmo\nde clustering"}}
-    C --> D(["Patrones\ndescubiertos"])
-    D --> E["Interpretación\ny decisión"]
-    classDef source fill:#E0F2FE,stroke:#0284C7,color:#0C4A6E,stroke-width:2px;
-    classDef process fill:#EEF2FF,stroke:#4F46E5,color:#312E81,stroke-width:2px;
-    classDef insight fill:#ECFDF5,stroke:#059669,color:#064E3B,stroke-width:2px;
-    class A source;
-    class B,C process;
-    class D,E insight;
-```
+![Del dato a la estructura](./assets/learning-foundations.svg)
 
 **Ejemplo intuitivo.** Si representamos canciones por rasgos como energía, tempo y acústica, un algoritmo puede reunir canciones similares. Esos grupos podrían interpretarse como estilos de escucha o contextos de uso, pero ningún algoritmo sabe por sí mismo que un grupo debe llamarse «para entrenar».
 
@@ -132,20 +122,6 @@ y el modelo aprende una función $f$ que aproxime $y \approx f(\mathbf{x})$. Si 
 | Resultado | Predicción de una etiqueta o valor | Asignación a grupos y descripción de patrones |
 | Ejemplo | Predecir si un correo es spam | Agrupar correos por temática sin categorías previas |
 | Evaluación habitual | Exactitud, F1, error cuadrático, etc. | Cohesión/separación, estabilidad y utilidad para el dominio |
-
-```mermaid
-flowchart TB
-    subgraph S["Aprendizaje supervisado"]
-        S1(["Datos + etiqueta"]) --> S2{{"Aprender\nf(X) → y"}} --> S3(["Predicción"])
-    end
-    subgraph U["Aprendizaje no supervisado"]
-        U1(["Datos sin etiqueta"]) --> U2{{"Buscar\nestructura"}} --> U3(["Patrones y\nsegmentos"])
-    end
-    classDef supervised fill:#FFF7ED,stroke:#EA580C,color:#7C2D12,stroke-width:2px;
-    classDef unsupervised fill:#EFF6FF,stroke:#2563EB,color:#1E3A8A,stroke-width:2px;
-    class S1,S2,S3 supervised;
-    class U1,U2,U3 unsupervised;
-```
 
 La distinción tiene una consecuencia práctica importante: en clustering no existe normalmente una «solución verdadera» con la que comparar cada punto. Por ello, un resultado debe juzgarse tanto con criterios cuantitativos como con su interpretación y utilidad en el contexto real.
 
@@ -184,19 +160,7 @@ Ambos enfoques agrupan observaciones sin etiquetas, pero construyen el resultado
 - El **clustering basado en centroides**, también llamado **particional**, divide los datos directamente en un número fijo de grupos, $K$. Cada grupo se resume mediante un centro representativo, el **centroide**.
 - El **clustering jerárquico** construye una estructura de grupos anidados. En su versión aglomerativa, comienza con una observación por grupo y los va fusionando progresivamente; el resultado es un árbol llamado **dendrograma**.
 
-```mermaid
-flowchart LR
-    subgraph P["Particional · K-Means"]
-        P1(["Fijar K"]) --> P2{{"Asignar\nal centroide"}} --> P3(["Partición\nplana"])
-    end
-    subgraph H["Jerárquico · Aglomerativo"]
-        H1(["Un punto,\nun grupo"]) --> H2{{"Fusionar\npor enlace"}} --> H3(["Dendrograma\nmultiescala"])
-    end
-    classDef partition fill:#EDE9FE,stroke:#7C3AED,color:#4C1D95,stroke-width:2px;
-    classDef hierarchy fill:#ECFDF5,stroke:#059669,color:#064E3B,stroke-width:2px;
-    class P1,P2,P3 partition;
-    class H1,H2,H3 hierarchy;
-```
+![Enfoques de clustering](./assets/clustering-methods.svg)
 
 > **Analogía:** K-Means reparte libros directamente en $K$ estanterías. El método jerárquico primero junta libros muy similares, después agrupa esas colecciones y conserva la historia completa de esas uniones.
 
@@ -234,22 +198,6 @@ El algoritmo representativo es el **clustering jerárquico aglomerativo**. Comie
 
 El dendrograma conserva las fusiones y la distancia (o coste) a la que suceden. Al **cortarlo horizontalmente** se decide cuántos clusters se desean: un corte bajo produce muchos grupos pequeños y uno alto produce pocos grupos grandes.
 
-```mermaid
-flowchart BT
-    A(("A")) --> AB(["{A, B}"])
-    B(("B")) --> AB
-    C(("C")) --> CD(["{C, D}"])
-    D(("D")) --> CD
-    AB --> ALL(["{A, B, C, D}"])
-    CD --> ALL
-    classDef leaf fill:#E0F2FE,stroke:#0284C7,color:#0C4A6E,stroke-width:2px;
-    classDef branch fill:#EEF2FF,stroke:#6366F1,color:#312E81,stroke-width:2px;
-    classDef root fill:#F3E8FF,stroke:#9333EA,color:#581C87,stroke-width:2px;
-    class A,B,C,D leaf;
-    class AB,CD branch;
-    class ALL root;
-```
-
 **Ejemplo.** En biología, se pueden agrupar muestras de expresión génica y observar el dendrograma. Si a cierta altura dos ramas se unen, ello señala que sus perfiles son más parecidos entre sí que las ramas que solo se unen a alturas mayores. El investigador puede elegir el nivel de detalle apropiado después de estudiar esa estructura.
 
 **Fortalezas y límites.** Este método resulta muy interpretable porque muestra agrupaciones a distintas escalas y no obliga a fijar $K$ antes de construir el árbol. Sin embargo, suele ser más costoso en memoria y tiempo que K-Means en conjuntos grandes; además, las fusiones aglomerativas son irreversibles y el resultado depende de la métrica y del enlace elegidos. Un enlace inadecuado puede unir prematuramente grupos que deberían permanecer separados.
@@ -284,22 +232,7 @@ El **clustering basado en densidad** define un cluster como una región del espa
 
 En lugar de buscar un centro de cada grupo o construir un árbol de fusiones, DBSCAN responde a una pregunta local: **«¿hay suficientes observaciones cerca de este punto?»**. Si existen zonas densas conectadas entre sí, forman un cluster; si una observación queda alejada de toda zona densa, se marca como ruido o valor atípico.
 
-```mermaid
-flowchart LR
-    A(["Punto\nanalizado"]) --> B{"¿≥ MinPts\ndentro de ε?"}
-    B -- "Sí" --> C(["Núcleo\nexpande"])
-    B -- "No, cerca de\nun núcleo" --> D(["Frontera\nse asigna"])
-    B -- "No" --> E(["Ruido\n−1"])
-    C --> F{{"Cluster por\ndensidad conectada"}}
-    classDef input fill:#E0F2FE,stroke:#0284C7,color:#0C4A6E,stroke-width:2px;
-    classDef core fill:#EEF2FF,stroke:#4F46E5,color:#312E81,stroke-width:2px;
-    classDef border fill:#ECFDF5,stroke:#059669,color:#064E3B,stroke-width:2px;
-    classDef noise fill:#F3F4F6,stroke:#6B7280,color:#374151,stroke-width:2px;
-    class A,B input;
-    class C,F core;
-    class D border;
-    class E noise;
-```
+![Conceptos de DBSCAN](./assets/dbscan-concepts.svg)
 
 ### 3.1. Los conceptos y los hiperparámetros de DBSCAN
 
@@ -335,20 +268,6 @@ De forma simplificada, DBSCAN recorre los puntos aún no visitados:
 5. Los puntos que nunca quedan conectados a un núcleo permanecen como ruido.
 
 El término importante es **conectividad por densidad**: dos zonas forman un mismo cluster si es posible recorrerlas mediante una cadena de puntos núcleo vecinos. Así, DBSCAN puede seguir curvas o contornos complejos sin tener que aproximarlos mediante un centro.
-
-```mermaid
-flowchart LR
-    N1(("Núcleo A")) --- N2(("Núcleo B")) --- N3(("Núcleo C"))
-    N1 --- F1(["Frontera"])
-    N3 --- F2(["Frontera"])
-    O(("Aislado"))
-    classDef core fill:#4F46E5,color:#FFFFFF,stroke:#3730A3,stroke-width:2px;
-    classDef border fill:#CCFBF1,color:#134E4A,stroke:#0F766E,stroke-width:2px;
-    classDef noise fill:#F3F4F6,color:#4B5563,stroke:#9CA3AF,stroke-width:2px;
-    class N1,N2,N3 core;
-    class F1,F2 border;
-    class O noise;
-```
 
 ### 3.3. Diferencias frente a centroides y jerárquico
 
@@ -402,24 +321,7 @@ Por ejemplo, al aplicar K-Means a clientes de una tienda, $K=2$ podría mezclar 
 | Jerárquico | Métrica, enlace y altura de corte | Fusiones tempranas irreversibles o partición poco útil. |
 | DBSCAN | $\varepsilon$, `MinPts` y métrica | Clusters artificialmente unidos, exceso de ruido o pérdida de grupos reales. |
 
-```mermaid
-flowchart LR
-    A(["Datos +\nobjetivo"]) --> B["Preparar\ny medir"]
-    B --> C["Probar\nparámetros"]
-    C --> D["Evaluar\ncalidad"]
-    D --> E["Comprobar\nestabilidad"]
-    E --> F{"¿Resultado útil\ny consistente?"}
-    F -- "No" --> C
-    F -- "Sí" --> G(["Solución\ndocumentada"])
-    classDef start fill:#E0F2FE,stroke:#0284C7,color:#0C4A6E,stroke-width:2px;
-    classDef stage fill:#EEF2FF,stroke:#4F46E5,color:#312E81,stroke-width:2px;
-    classDef decision fill:#FFF7ED,stroke:#EA580C,color:#7C2D12,stroke-width:2px;
-    classDef finish fill:#ECFDF5,stroke:#059669,color:#064E3B,stroke-width:2px;
-    class A start;
-    class B,C,D,E stage;
-    class F decision;
-    class G finish;
-```
+![Guía de validación](./assets/validation-guide.svg)
 
 ### 4.1. Método del codo
 
@@ -440,21 +342,6 @@ La inercia siempre disminuye —o se mantiene— al aumentar $K$, porque cada ce
 | 4 | 330 | Mejora apreciable. |
 | 5 | 295 | La mejora comienza a ser menor. |
 | 6 | 275 | Ganancia marginal. |
-
-```mermaid
-flowchart LR
-    K1(["K = 1\n1 200"]) --> K2(["K = 2\n720"]) --> K3(["K = 3\n410"]) --> K4(["K = 4\n330"])
-    K4 --> K5(["K = 5\n295"]) --> K6(["K = 6\n275"])
-    K4 -. "codo" .-> R{{"Ajuste suficiente\nsin complejidad extra"}}
-    classDef decline fill:#E0F2FE,stroke:#0284C7,color:#0C4A6E,stroke-width:2px;
-    classDef elbow fill:#FEF3C7,stroke:#D97706,color:#78350F,stroke-width:3px;
-    classDef plateau fill:#F3F4F6,stroke:#9CA3AF,color:#374151,stroke-width:2px;
-    classDef insight fill:#ECFDF5,stroke:#059669,color:#064E3B,stroke-width:2px;
-    class K1,K2,K3 decline;
-    class K4 elbow;
-    class K5,K6 plateau;
-    class R insight;
-```
 
 En el ejemplo, $K=4$ sería un candidato razonable, no una decisión automática. Debe contrastarse con la utilidad de interpretar cuatro segmentos frente a tres o cinco.
 
@@ -482,23 +369,6 @@ La silueta global es la media de $s(i)$ para todas las observaciones y toma valo
 | Cercano a $+1$ | El punto está bien integrado en su cluster y lejos de los demás. |
 | Cercano a $0$ | El punto está en la frontera entre dos clusters. |
 | Menor que $0$ | El punto podría encajar mejor en otro cluster. |
-
-```mermaid
-flowchart LR
-    A(("Punto i")) --> B["a(i)\ncohesión"]
-    A --> C["b(i)\nseparación"]
-    B --> D{{"Comparar\na(i) y b(i)"}}
-    C --> D
-    D --> E(["Silueta\n−1 ≤ s(i) ≤ 1"])
-    classDef sample fill:#E0F2FE,stroke:#0284C7,color:#0C4A6E,stroke-width:2px;
-    classDef measure fill:#EEF2FF,stroke:#4F46E5,color:#312E81,stroke-width:2px;
-    classDef compare fill:#FFF7ED,stroke:#EA580C,color:#7C2D12,stroke-width:2px;
-    classDef result fill:#ECFDF5,stroke:#059669,color:#064E3B,stroke-width:2px;
-    class A sample;
-    class B,C measure;
-    class D compare;
-    class E result;
-```
 
 Para elegir $K$ con K-Means, se calcula la silueta media para varios valores y se prefieren valores altos, examinando también el gráfico de siluetas por cluster. Un promedio alto con un grupo diminuto o con muchos valores negativos merece revisión: el promedio puede ocultar problemas locales.
 
@@ -554,27 +424,6 @@ La elección final debe combinar la curva de inercia, el mayor valor de silueta 
 ## 5. Algoritmos principales de clustering
 
 Esta sección reúne los cuatro algoritmos centrales de la investigación. Todos buscan agrupar datos sin etiquetas, pero no comparten la misma definición de «grupo»: pueden basarse en proximidad a un centro, relaciones jerárquicas, densidad local o un modelo probabilístico.
-
-```mermaid
-flowchart LR
-    A(["Datos sin\netiquetas"]) --> B{"¿Qué patrón\nimporta?"}
-    B -- "Compacto" --> C(["K-Means"])
-    B -- "Jerarquía" --> D(["Aglomerativo"])
-    B -- "Densidad y ruido" --> E(["DBSCAN"])
-    B -- "Solapamiento" --> F(["GMM"])
-    classDef data fill:#E0F2FE,stroke:#0284C7,color:#0C4A6E,stroke-width:2px;
-    classDef question fill:#FFF7ED,stroke:#EA580C,color:#7C2D12,stroke-width:2px;
-    classDef kmeans fill:#EDE9FE,stroke:#7C3AED,color:#4C1D95,stroke-width:2px;
-    classDef hierarchical fill:#ECFDF5,stroke:#059669,color:#064E3B,stroke-width:2px;
-    classDef density fill:#DBEAFE,stroke:#2563EB,color:#1E3A8A,stroke-width:2px;
-    classDef probability fill:#FCE7F3,stroke:#DB2777,color:#831843,stroke-width:2px;
-    class A data;
-    class B question;
-    class C kmeans;
-    class D hierarchical;
-    class E density;
-    class F probability;
-```
 
 ### 5.1. K-Means
 
