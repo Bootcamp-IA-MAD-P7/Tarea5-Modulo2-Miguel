@@ -25,6 +25,7 @@ Esta investigación estudia cómo funcionan los algoritmos de *clustering*, sus 
 1. [Aprendizaje no supervisado y algoritmos de clustering](#1-aprendizaje-no-supervisado-y-algoritmos-de-clustering)
 2. [Clustering basado en centroides y clustering jerárquico](#2-clustering-basado-en-centroides-y-clustering-jerárquico)
 3. [Clustering basado en densidad: DBSCAN](#3-clustering-basado-en-densidad-dbscan)
+4. [Elección de hiperparámetros y evaluación del agrupamiento](#4-elección-de-hiperparámetros-y-evaluación-del-agrupamiento)
 
 ---
 
@@ -332,6 +333,144 @@ Un criterio práctico es usar DBSCAN tras normalizar los datos y analizar la dis
 1. scikit-learn developers. [*DBSCAN y clustering basado en densidad*](https://scikit-learn.org/stable/modules/clustering.html#dbscan), documentación oficial.
 2. Ester, M., Kriegel, H.-P., Sander, J. y Xu, X. [*A Density-Based Algorithm for Discovering Clusters in Large Spatial Databases with Noise*](https://www.aaai.org/Papers/KDD/1996/KDD96-037.pdf), KDD, 1996.
 3. Schubert, E., Sander, J., Ester, M., Kriegel, H.-P. y Xu, X. [*DBSCAN Revisited, Revisited: Why and How You Should (Still) Use DBSCAN*](https://doi.org/10.1145/3068335), *ACM Transactions on Database Systems*, 2017.
+
+---
+
+## 4. Elección de hiperparámetros y evaluación del agrupamiento
+
+### Elegir parámetros es elegir la historia que cuentan los datos
+
+Un algoritmo de clustering no «descubre» grupos de manera totalmente automática: sus hiperparámetros determinan qué patrón considera un grupo. Elegirlos mal puede fusionar poblaciones que son distintas, fragmentar una misma población en partes artificiales o confundir ruido con estructura.
+
+Por ejemplo, al aplicar K-Means a clientes de una tienda, $K=2$ podría mezclar compradores frecuentes con compradores de gasto alto; $K=10$ podría crear segmentos demasiado pequeños y poco accionables. Con DBSCAN, un $\varepsilon$ demasiado grande conecta regiones que deberían permanecer separadas, mientras que uno demasiado pequeño convierte muchos puntos en ruido. Por eso, el «mejor» resultado no es necesariamente el que devuelve más clusters ni el que optimiza una sola cifra: debe ser **coherente, estable e interpretable**.
+
+| Algoritmo | Decisiones que cambian el agrupamiento | Riesgo si se eligen mal |
+| :--- | :--- | :--- |
+| K-Means | Número de clusters $K$, inicialización y escalado | Grupos fusionados o fragmentados; solución local desfavorable. |
+| Jerárquico | Métrica, enlace y altura de corte | Fusiones tempranas irreversibles o partición poco útil. |
+| DBSCAN | $\varepsilon$, `MinPts` y métrica | Clusters artificialmente unidos, exceso de ruido o pérdida de grupos reales. |
+
+```mermaid
+flowchart LR
+    A["Datos y objetivo\ndel análisis"] --> B["Preprocesar\ny elegir distancia"]
+    B --> C["Probar parámetros\nrazonables"]
+    C --> D["Medir calidad\ninterna"]
+    D --> E["Comprobar estabilidad\ne interpretación"]
+    E --> F{"¿Resultado útil\ny consistente?"}
+    F -- "No" --> C
+    F -- "Sí" --> G["Seleccionar solución\ny documentar criterios"]
+```
+
+### 4.1. Método del codo
+
+El **método del codo** se usa principalmente con K-Means para comparar distintos valores de $K$. Para cada valor se calcula la **inercia**, también llamada suma de cuadrados dentro de los clusters (*WCSS*, *Within-Cluster Sum of Squares*):
+
+$$
+\text{Inercia}(K) = \sum_{k=1}^{K}\sum_{\mathbf{x}_i \in C_k}
+\lVert \mathbf{x}_i - \boldsymbol{\mu}_k \rVert^2.
+$$
+
+La inercia siempre disminuye —o se mantiene— al aumentar $K$, porque cada centroide adicional da más capacidad para ajustarse a los datos. El objetivo no es buscar el mínimo absoluto, que ocurriría cuando cada punto fuese un cluster, sino encontrar el punto a partir del cual añadir más grupos apenas reduce la inercia: el **codo**.
+
+| $K$ probado | Inercia de ejemplo | Lectura |
+| :---: | :---: | :--- |
+| 1 | 1 200 | Un único grupo explica muy mal la variabilidad. |
+| 2 | 720 | Mejora grande. |
+| 3 | 410 | Mejora grande. |
+| 4 | 330 | Mejora apreciable. |
+| 5 | 295 | La mejora comienza a ser menor. |
+| 6 | 275 | Ganancia marginal. |
+
+```mermaid
+flowchart LR
+    K1["K = 1\nInercia alta"] --> K2["K = 2\n↓ fuerte"] --> K3["K = 3\n↓ fuerte"] --> K4["K = 4\n↓ moderada"] --> K5["K = 5\n↓ pequeña"] --> K6["K = 6\n↓ muy pequeña"]
+    K4 -. "posible codo" .-> R["Equilibrio entre\najuste y simplicidad"]
+```
+
+En el ejemplo, $K=4$ sería un candidato razonable, no una decisión automática. Debe contrastarse con la utilidad de interpretar cuatro segmentos frente a tres o cinco.
+
+**Ventajas.** Es sencillo, visual y rápido de calcular si ya se ejecuta K-Means.
+
+**Limitaciones.** El codo puede ser difuso o no existir; la inercia solo es comparable en el mismo conjunto y con la misma representación de datos; además, está alineada con el supuesto de grupos compactos de K-Means. Por tanto, no es el método adecuado como criterio único para DBSCAN ni garantiza que la segmentación tenga significado de negocio o científico.
+
+### 4.2. Coeficiente de silueta
+
+El **coeficiente de silueta** evalúa simultáneamente la cohesión interna y la separación. Para un punto $i$:
+
+- $a(i)$ es la distancia media entre $i$ y los demás puntos de su propio cluster.
+- $b(i)$ es la menor distancia media entre $i$ y cualquier otro cluster; es decir, la distancia al cluster vecino más cercano.
+
+Su silueta individual es:
+
+$$
+s(i) = \frac{b(i) - a(i)}{\max\{a(i), b(i)\}}.
+$$
+
+La silueta global es la media de $s(i)$ para todas las observaciones y toma valores entre $-1$ y $1$.
+
+| Valor de $s(i)$ | Interpretación |
+| :---: | :--- |
+| Cercano a $+1$ | El punto está bien integrado en su cluster y lejos de los demás. |
+| Cercano a $0$ | El punto está en la frontera entre dos clusters. |
+| Menor que $0$ | El punto podría encajar mejor en otro cluster. |
+
+```mermaid
+flowchart LR
+    A["Punto i"] --> B["a(i): distancia media\na su propio grupo"]
+    A --> C["b(i): distancia media\nal grupo vecino"]
+    B --> D["Comparar cohesión\ny separación"]
+    C --> D
+    D --> E["s(i) entre −1 y 1"]
+```
+
+Para elegir $K$ con K-Means, se calcula la silueta media para varios valores y se prefieren valores altos, examinando también el gráfico de siluetas por cluster. Un promedio alto con un grupo diminuto o con muchos valores negativos merece revisión: el promedio puede ocultar problemas locales.
+
+**Ventajas.** No depende del algoritmo usado, incorpora cohesión y separación, y permite inspeccionar tanto cada punto como el promedio global.
+
+**Limitaciones.** Requiere elegir una métrica de distancia apropiada; puede favorecer grupos compactos y bien separados frente a estructuras complejas; y su cálculo puede ser costoso en conjuntos muy grandes. Debe aplicarse solo cuando hay al menos dos clusters y tratar el ruido de DBSCAN con cuidado —normalmente se evalúan los puntos no etiquetados como ruido por separado—.
+
+### 4.3. No decidir con una sola métrica: estabilidad y conocimiento del dominio
+
+El codo y la silueta son **métricas internas**: evalúan la estructura usando únicamente los datos y el resultado del algoritmo. Son muy útiles cuando no hay etiquetas, pero no sustituyen el juicio del problema. Una buena práctica consiste en combinar evidencias:
+
+1. **Calidad interna:** contrastar inercia, silueta u otra métrica compatible con la geometría esperada.
+2. **Estabilidad:** repetir el proceso con distintas semillas, subconjuntos o pequeñas perturbaciones. Si los grupos cambian radicalmente, la conclusión es frágil.
+3. **Interpretabilidad:** comprobar que los perfiles resultantes son distinguibles y útiles para el objetivo. Cuatro segmentos de clientes deben describir comportamientos diferentes que permitan tomar decisiones reales.
+4. **Validación externa, si existen etiquetas de referencia:** comparar el resultado con ellas mediante métricas como el *Adjusted Rand Index* (ARI). Estas etiquetas sirven para validar, no para entrenar el clustering.
+
+> **Regla práctica:** primero se seleccionan varios candidatos mediante métricas; después se elige la solución más estable y útil para el contexto. La métrica no reemplaza el criterio experto.
+
+### 4.4. Ejemplo reproducible en Python
+
+El siguiente código compara varios valores de $K$ mediante inercia y silueta. Se presupone que `X_scaled` contiene las variables ya normalizadas.
+
+```python
+from sklearn.cluster import KMeans
+from sklearn.metrics import silhouette_score
+
+resultados = []
+
+for k in range(2, 9):
+    modelo = KMeans(n_clusters=k, init="k-means++", n_init=20, random_state=42)
+    etiquetas = modelo.fit_predict(X_scaled)
+
+    resultados.append({
+        "k": k,
+        "inercia": modelo.inertia_,
+        "silueta": silhouette_score(X_scaled, etiquetas),
+    })
+
+for resultado in resultados:
+    print(resultado)
+```
+
+La elección final debe combinar la curva de inercia, el mayor valor de silueta que sea interpretable y el objetivo del caso de uso. En especial, no se debe seleccionar $K$ únicamente porque produzca el máximo numérico si ello genera segmentos sin sentido práctico.
+
+### Fuentes
+
+1. scikit-learn developers. [*Clustering performance evaluation*](https://scikit-learn.org/stable/modules/clustering.html#clustering-performance-evaluation) y [*Silhouette analysis on K-Means*](https://scikit-learn.org/stable/auto_examples/cluster/plot_kmeans_silhouette_analysis.html), documentación oficial.
+2. Rousseeuw, P. J. [*Silhouettes: A Graphical Aid to the Interpretation and Validation of Cluster Analysis*](https://doi.org/10.1016/0377-0427(87)90125-7), *Journal of Computational and Applied Mathematics*, 1987.
+3. Kaufman, L. y Rousseeuw, P. J. [*Finding Groups in Data: An Introduction to Cluster Analysis*](https://doi.org/10.1002/9780470316801), Wiley, 2005.
 
 ---
 
