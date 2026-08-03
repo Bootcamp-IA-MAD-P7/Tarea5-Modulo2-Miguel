@@ -165,7 +165,7 @@ flowchart LR
 El algoritmo representativo es **K-Means**. Su objetivo es hallar $K$ centroides $\boldsymbol{\mu}_1,\ldots,\boldsymbol{\mu}_K$ y una asignación de cada punto a uno de ellos que minimice la variación interna:
 
 $$
-\underset{C_1,\ldots,C_K}{\operatorname{minimizar}}
+\min_{C_1,\ldots,C_K}
 \sum_{k=1}^{K}\sum_{\mathbf{x}_i \in C_k}
 \left\lVert \mathbf{x}_i - \boldsymbol{\mu}_k \right\rVert^2,
 $$
