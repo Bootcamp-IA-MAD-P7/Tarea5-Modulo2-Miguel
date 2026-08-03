@@ -1,7 +1,5 @@
 <div align="center">
 
-<img src="./assets/clustering-cover.png" alt="Ilustración conceptual de agrupamientos de datos" width="100%">
-
 # Investigación y Desarrollo sobre Algoritmos de Clustering
 
 ### Parte 1 · Algoritmos no supervisados de clustering
@@ -103,10 +101,16 @@ Un cluster **no es automáticamente una clase real**. El algoritmo detecta regul
 
 ```mermaid
 flowchart LR
-    A["Datos sin etiquetas\nX = {x¹, x², ..., xⁿ}"] --> B["Representación y medida\nde similitud"]
-    B --> C["Algoritmo de clustering"]
-    C --> D["Grupos descubiertos\nC₁, C₂, ..., Cₖ"]
-    D --> E["Interpretación experta\ny decisiones"]
+    A(["Datos sin etiquetas\nX = {x¹, x², ..., xⁿ}"]) --> B["Representación\ny similitud"]
+    B --> C{{"Algoritmo\nde clustering"}}
+    C --> D(["Patrones\ndescubiertos"])
+    D --> E["Interpretación\ny decisión"]
+    classDef source fill:#E0F2FE,stroke:#0284C7,color:#0C4A6E,stroke-width:2px;
+    classDef process fill:#EEF2FF,stroke:#4F46E5,color:#312E81,stroke-width:2px;
+    classDef insight fill:#ECFDF5,stroke:#059669,color:#064E3B,stroke-width:2px;
+    class A source;
+    class B,C process;
+    class D,E insight;
 ```
 
 **Ejemplo intuitivo.** Si representamos canciones por rasgos como energía, tempo y acústica, un algoritmo puede reunir canciones similares. Esos grupos podrían interpretarse como estilos de escucha o contextos de uso, pero ningún algoritmo sabe por sí mismo que un grupo debe llamarse «para entrenar».
@@ -132,11 +136,15 @@ y el modelo aprende una función $f$ que aproxime $y \approx f(\mathbf{x})$. Si 
 ```mermaid
 flowchart TB
     subgraph S["Aprendizaje supervisado"]
-        S1["Ejemplos con respuesta\n(cliente, 'abandona')"] --> S2["Aprender f(X) → y"] --> S3["Predecir para un cliente nuevo"]
+        S1(["Datos + etiqueta"]) --> S2{{"Aprender\nf(X) → y"}} --> S3(["Predicción"])
     end
     subgraph U["Aprendizaje no supervisado"]
-        U1["Ejemplos sin respuesta\n(cliente, variables de uso)"] --> U2["Buscar estructura en X"] --> U3["Descubrir segmentos de clientes"]
+        U1(["Datos sin etiqueta"]) --> U2{{"Buscar\nestructura"}} --> U3(["Patrones y\nsegmentos"])
     end
+    classDef supervised fill:#FFF7ED,stroke:#EA580C,color:#7C2D12,stroke-width:2px;
+    classDef unsupervised fill:#EFF6FF,stroke:#2563EB,color:#1E3A8A,stroke-width:2px;
+    class S1,S2,S3 supervised;
+    class U1,U2,U3 unsupervised;
 ```
 
 La distinción tiene una consecuencia práctica importante: en clustering no existe normalmente una «solución verdadera» con la que comparar cada punto. Por ello, un resultado debe juzgarse tanto con criterios cuantitativos como con su interpretación y utilidad en el contexto real.
@@ -179,11 +187,15 @@ Ambos enfoques agrupan observaciones sin etiquetas, pero construyen el resultado
 ```mermaid
 flowchart LR
     subgraph P["Particional · K-Means"]
-        P1["Elegir K = 3"] --> P2["Asignar cada punto\nal centroide más cercano"] --> P3["Tres grupos finales\nsin relación entre niveles"]
+        P1(["Fijar K"]) --> P2{{"Asignar\nal centroide"}} --> P3(["Partición\nplana"])
     end
     subgraph H["Jerárquico · Aglomerativo"]
-        H1["Un grupo por\nobservación"] --> H2["Fusionar los dos grupos\nmás próximos en cada paso"] --> H3["Dendrograma\n(grupos a varias escalas)"]
+        H1(["Un punto,\nun grupo"]) --> H2{{"Fusionar\npor enlace"}} --> H3(["Dendrograma\nmultiescala"])
     end
+    classDef partition fill:#EDE9FE,stroke:#7C3AED,color:#4C1D95,stroke-width:2px;
+    classDef hierarchy fill:#ECFDF5,stroke:#059669,color:#064E3B,stroke-width:2px;
+    class P1,P2,P3 partition;
+    class H1,H2,H3 hierarchy;
 ```
 
 > **Analogía:** K-Means reparte libros directamente en $K$ estanterías. El método jerárquico primero junta libros muy similares, después agrupa esas colecciones y conserva la historia completa de esas uniones.
@@ -224,12 +236,18 @@ El dendrograma conserva las fusiones y la distancia (o coste) a la que suceden. 
 
 ```mermaid
 flowchart BT
-    A["A"] --> AB["{A, B}"]
-    B["B"] --> AB
-    C["C"] --> CD["{C, D}"]
-    D["D"] --> CD
-    AB --> ALL["{A, B, C, D}"]
+    A(("A")) --> AB(["{A, B}"])
+    B(("B")) --> AB
+    C(("C")) --> CD(["{C, D}"])
+    D(("D")) --> CD
+    AB --> ALL(["{A, B, C, D}"])
     CD --> ALL
+    classDef leaf fill:#E0F2FE,stroke:#0284C7,color:#0C4A6E,stroke-width:2px;
+    classDef branch fill:#EEF2FF,stroke:#6366F1,color:#312E81,stroke-width:2px;
+    classDef root fill:#F3E8FF,stroke:#9333EA,color:#581C87,stroke-width:2px;
+    class A,B,C,D leaf;
+    class AB,CD branch;
+    class ALL root;
 ```
 
 **Ejemplo.** En biología, se pueden agrupar muestras de expresión génica y observar el dendrograma. Si a cierta altura dos ramas se unen, ello señala que sus perfiles son más parecidos entre sí que las ramas que solo se unen a alturas mayores. El investigador puede elegir el nivel de detalle apropiado después de estudiar esa estructura.
@@ -268,11 +286,19 @@ En lugar de buscar un centro de cada grupo o construir un árbol de fusiones, DB
 
 ```mermaid
 flowchart LR
-    A["Punto analizado"] --> B{"¿Tiene al menos\nMinPts vecinos dentro de ε?"}
-    B -- "Sí" --> C["Punto núcleo\n(expande el cluster)"]
-    B -- "No, pero está junto\na un núcleo" --> D["Punto frontera\n(pertenece al cluster)"]
-    B -- "No" --> E["Ruido / outlier\n(no se asigna a un cluster)"]
-    C --> F["Conectar núcleos\npróximos y sus fronteras"]
+    A(["Punto\nanalizado"]) --> B{"¿≥ MinPts\ndentro de ε?"}
+    B -- "Sí" --> C(["Núcleo\nexpande"])
+    B -- "No, cerca de\nun núcleo" --> D(["Frontera\nse asigna"])
+    B -- "No" --> E(["Ruido\n−1"])
+    C --> F{{"Cluster por\ndensidad conectada"}}
+    classDef input fill:#E0F2FE,stroke:#0284C7,color:#0C4A6E,stroke-width:2px;
+    classDef core fill:#EEF2FF,stroke:#4F46E5,color:#312E81,stroke-width:2px;
+    classDef border fill:#ECFDF5,stroke:#059669,color:#064E3B,stroke-width:2px;
+    classDef noise fill:#F3F4F6,stroke:#6B7280,color:#374151,stroke-width:2px;
+    class A,B input;
+    class C,F core;
+    class D border;
+    class E noise;
 ```
 
 ### 3.1. Los conceptos y los hiperparámetros de DBSCAN
@@ -312,13 +338,13 @@ El término importante es **conectividad por densidad**: dos zonas forman un mis
 
 ```mermaid
 flowchart LR
-    N1["Núcleo A"] --- N2["Núcleo B"] --- N3["Núcleo C"]
-    N1 --- F1["Frontera"]
-    N3 --- F2["Frontera"]
-    O["Punto aislado"]
-    classDef core fill:#2563EB,color:#fff,stroke:#1D4ED8;
-    classDef border fill:#BFDBFE,color:#172554,stroke:#60A5FA;
-    classDef noise fill:#E5E7EB,color:#374151,stroke:#9CA3AF;
+    N1(("Núcleo A")) --- N2(("Núcleo B")) --- N3(("Núcleo C"))
+    N1 --- F1(["Frontera"])
+    N3 --- F2(["Frontera"])
+    O(("Aislado"))
+    classDef core fill:#4F46E5,color:#FFFFFF,stroke:#3730A3,stroke-width:2px;
+    classDef border fill:#CCFBF1,color:#134E4A,stroke:#0F766E,stroke-width:2px;
+    classDef noise fill:#F3F4F6,color:#4B5563,stroke:#9CA3AF,stroke-width:2px;
     class N1,N2,N3 core;
     class F1,F2 border;
     class O noise;
@@ -378,13 +404,21 @@ Por ejemplo, al aplicar K-Means a clientes de una tienda, $K=2$ podría mezclar 
 
 ```mermaid
 flowchart LR
-    A["Datos y objetivo\ndel análisis"] --> B["Preprocesar\ny elegir distancia"]
-    B --> C["Probar parámetros\nrazonables"]
-    C --> D["Medir calidad\ninterna"]
-    D --> E["Comprobar estabilidad\ne interpretación"]
+    A(["Datos +\nobjetivo"]) --> B["Preparar\ny medir"]
+    B --> C["Probar\nparámetros"]
+    C --> D["Evaluar\ncalidad"]
+    D --> E["Comprobar\nestabilidad"]
     E --> F{"¿Resultado útil\ny consistente?"}
     F -- "No" --> C
-    F -- "Sí" --> G["Seleccionar solución\ny documentar criterios"]
+    F -- "Sí" --> G(["Solución\ndocumentada"])
+    classDef start fill:#E0F2FE,stroke:#0284C7,color:#0C4A6E,stroke-width:2px;
+    classDef stage fill:#EEF2FF,stroke:#4F46E5,color:#312E81,stroke-width:2px;
+    classDef decision fill:#FFF7ED,stroke:#EA580C,color:#7C2D12,stroke-width:2px;
+    classDef finish fill:#ECFDF5,stroke:#059669,color:#064E3B,stroke-width:2px;
+    class A start;
+    class B,C,D,E stage;
+    class F decision;
+    class G finish;
 ```
 
 ### 4.1. Método del codo
@@ -409,8 +443,17 @@ La inercia siempre disminuye —o se mantiene— al aumentar $K$, porque cada ce
 
 ```mermaid
 flowchart LR
-    K1["K = 1\nInercia alta"] --> K2["K = 2\n↓ fuerte"] --> K3["K = 3\n↓ fuerte"] --> K4["K = 4\n↓ moderada"] --> K5["K = 5\n↓ pequeña"] --> K6["K = 6\n↓ muy pequeña"]
-    K4 -. "posible codo" .-> R["Equilibrio entre\najuste y simplicidad"]
+    K1(["K = 1\n1 200"]) --> K2(["K = 2\n720"]) --> K3(["K = 3\n410"]) --> K4(["K = 4\n330"])
+    K4 --> K5(["K = 5\n295"]) --> K6(["K = 6\n275"])
+    K4 -. "codo" .-> R{{"Ajuste suficiente\nsin complejidad extra"}}
+    classDef decline fill:#E0F2FE,stroke:#0284C7,color:#0C4A6E,stroke-width:2px;
+    classDef elbow fill:#FEF3C7,stroke:#D97706,color:#78350F,stroke-width:3px;
+    classDef plateau fill:#F3F4F6,stroke:#9CA3AF,color:#374151,stroke-width:2px;
+    classDef insight fill:#ECFDF5,stroke:#059669,color:#064E3B,stroke-width:2px;
+    class K1,K2,K3 decline;
+    class K4 elbow;
+    class K5,K6 plateau;
+    class R insight;
 ```
 
 En el ejemplo, $K=4$ sería un candidato razonable, no una decisión automática. Debe contrastarse con la utilidad de interpretar cuatro segmentos frente a tres o cinco.
@@ -442,11 +485,19 @@ La silueta global es la media de $s(i)$ para todas las observaciones y toma valo
 
 ```mermaid
 flowchart LR
-    A["Punto i"] --> B["a(i): distancia media\na su propio grupo"]
-    A --> C["b(i): distancia media\nal grupo vecino"]
-    B --> D["Comparar cohesión\ny separación"]
+    A(("Punto i")) --> B["a(i)\ncohesión"]
+    A --> C["b(i)\nseparación"]
+    B --> D{{"Comparar\na(i) y b(i)"}}
     C --> D
-    D --> E["s(i) entre −1 y 1"]
+    D --> E(["Silueta\n−1 ≤ s(i) ≤ 1"])
+    classDef sample fill:#E0F2FE,stroke:#0284C7,color:#0C4A6E,stroke-width:2px;
+    classDef measure fill:#EEF2FF,stroke:#4F46E5,color:#312E81,stroke-width:2px;
+    classDef compare fill:#FFF7ED,stroke:#EA580C,color:#7C2D12,stroke-width:2px;
+    classDef result fill:#ECFDF5,stroke:#059669,color:#064E3B,stroke-width:2px;
+    class A sample;
+    class B,C measure;
+    class D compare;
+    class E result;
 ```
 
 Para elegir $K$ con K-Means, se calcula la silueta media para varios valores y se prefieren valores altos, examinando también el gráfico de siluetas por cluster. Un promedio alto con un grupo diminuto o con muchos valores negativos merece revisión: el promedio puede ocultar problemas locales.
@@ -506,11 +557,23 @@ Esta sección reúne los cuatro algoritmos centrales de la investigación. Todos
 
 ```mermaid
 flowchart LR
-    A["Datos sin etiquetas"] --> B{"¿Qué estructura\nse espera?"}
-    B -- "Grupos compactos\ny segmentación rápida" --> C["K-Means"]
-    B -- "Relaciones a\ndistintas escalas" --> D["Jerárquico\naglomerativo"]
-    B -- "Formas irregulares\ny ruido" --> E["DBSCAN"]
-    B -- "Grupos solapados\ny probabilidad" --> F["GMM"]
+    A(["Datos sin\netiquetas"]) --> B{"¿Qué patrón\nimporta?"}
+    B -- "Compacto" --> C(["K-Means"])
+    B -- "Jerarquía" --> D(["Aglomerativo"])
+    B -- "Densidad y ruido" --> E(["DBSCAN"])
+    B -- "Solapamiento" --> F(["GMM"])
+    classDef data fill:#E0F2FE,stroke:#0284C7,color:#0C4A6E,stroke-width:2px;
+    classDef question fill:#FFF7ED,stroke:#EA580C,color:#7C2D12,stroke-width:2px;
+    classDef kmeans fill:#EDE9FE,stroke:#7C3AED,color:#4C1D95,stroke-width:2px;
+    classDef hierarchical fill:#ECFDF5,stroke:#059669,color:#064E3B,stroke-width:2px;
+    classDef density fill:#DBEAFE,stroke:#2563EB,color:#1E3A8A,stroke-width:2px;
+    classDef probability fill:#FCE7F3,stroke:#DB2777,color:#831843,stroke-width:2px;
+    class A data;
+    class B question;
+    class C kmeans;
+    class D hierarchical;
+    class E density;
+    class F probability;
 ```
 
 ### 5.1. K-Means
